@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Nutrisi Modern (Versi Kaca)</title>
+    <style>
+        /* --- Import Font --- */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+        /* --- Variabel Tema Kaca (Glassmorphism) --- */
+        :root {
+            /* * Warna Latar Belakang (dengan transparansi)
+             * Formatnya: rgba(Merah, Hijau, Biru, Alpha/Transparansi)
+             * Alpha 0.7 = 70% Opaque (30% Transparan)
+             * Alpha 0.6 = 60% Opaque (40% Transparan)
+            */
+            --bg-primary-rgba: rgba(30, 30, 45, 0.65); /* Latar header */
+            --bg-secondary-rgba: rgba(39, 41, 61, 0.6);  /* Latar kontainer utama */
+            --bg-tertiary-rgba: rgba(58, 60, 83, 0.65); /* Latar input & kartu */
+            
+            /* Warna Tepi (Border) dibuat sedikit transparan */
+            --border-color: rgba(160, 163, 196, 0.3);
+            
+            /* Warna Teks (Tetap Opaque agar mudah dibaca) */
+            --text-primary: #f0f0f5; 
+            --text-secondary: #a0a3c4; 
+            
+            /* Warna Aksen (Tetap Opaque) */
+            --accent-primary: #00aaff; 
+            --accent-secondary: #0077ff; 
+            --shadow-color: rgba(0, 170, 255, 0.1);
+        }
+
+        /* --- Reset & Pengaturan Dasar --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            
+            /* ============================================================
+            --- GANTI FOTO LATAR BELAKANG DI SINI ---
+            Ganti URL di bawah ini dengan link foto Anda.
+            ============================================================
+            */
+            background-image: url('foto.jpg');
+            
+            background-size: cover; /* Memastikan gambar menutupi seluruh layar */
+            background-position: center; /* Posisi gambar di tengah */
+            background-attachment: fixed; /* Gambar tidak ikut scroll */
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+            color: var(--text-primary);
+        }
+
+        /* --- Animasi Fade-in --- */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- Kontainer Utama --- */
+        .container {
+            width: 100%;
+            max-width: 650px;
+            
+            /* Menerapkan warna latar belakang transparan */
+            background-color: var(--bg-secondary-rgba);
+            
+            /* EFEK KACA BURAM (FROSTED GLASS) */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px); /* Untuk Safari */
+            
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: fadeIn 0.8s ease-out;
+            border: 1px solid var(--border-color);
+        }
+
+        /* --- Header --- */
+        .header {
+            background-color: var(--bg-primary-rgba);
+            padding: 2.5rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header h1 {
+            color: var(--accent-primary);
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+            font-size: 2.25rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* --- Form --- */
+        .form-calculator {
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .form-group.inline {
+            flex-direction: row;
+            gap: 1.5rem;
+        }
+        
+        .form-group.inline > div {
+            width: 100%;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            
+            /* Latar belakang input/select transparan */
+            background-color: var(--bg-tertiary-rgba);
+            
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23a0a3c4' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+            padding-right: 3rem; 
+        }
+        
+        .form-group input::placeholder {
+            color: #7a7c93;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px var(--shadow-color);
+        }
+
+        /* --- Tombol --- */
+        .btn-submit {
+            padding: 1.1rem;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 119, 255, 0.3);
+        }
+
+        /* --- Hasil --- */
+        #results {
+            padding: 0 2.5rem 2.5rem;
+            display: none; 
+            animation: fadeIn 0.6s ease;
+        }
+
+        #results h2 {
+            text-align: center;
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+            font-weight: 600;
+            font-size: 1.75rem;
+        }
+
+        .result-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .card {
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            
+            /* Latar belakang kartu transparan */
+            background-color: var(--bg-tertiary-rgba);
+            
+            border: 1px solid var(--border-color);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px var(--shadow-color);
+            border-color: var(--accent-primary);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            width: 28px;
+            height: 28px;
+            color: var(--accent-primary);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .card-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            line-height: 1.2;
+        }
+        
+        .card-value span {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+            margin-left: 0.25rem;
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 600px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .header,
+            .form-calculator,
+            #results {
+                padding: 1.5rem;
+            }
+
+            .form-group.inline {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            .result-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.75rem;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+
+            #results h2 {
+                font-size: 1.5rem;
+            }
+
+            .card-value {
+                font-size: 2.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header class="header">
+            <h1>Kalkulator Nutrisi</h1>
+            <p>Web ini tak buat khusus untuk cewe akuuu yg cantikkk imut lusyukk dan gemeshhh><</p>
+        </header>
+
+        <form class="form-calculator" id="calorie-form">
+            <div class="form-group inline">
+                <div>
+                    <label for="age">Usia</label>
+                    <input type="number" id="age" placeholder="Contoh: 25" required>
+                </div>
+                <div>
+                    <label for="gender">Jenis Kelamin</label>
+                    <select id="gender" required>
+                        <option value="male">Pria</option>
+                        <option value="female">Wanita</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group inline">
+                <div>
+                    <label for="weight">Berat Badan (kg)</label>
+                    <input type="number" id="weight" placeholder="Contoh: 70" required>
+                </div>
+                <div>
+                    <label for="height">Tinggi Badan (cm)</label>
+                    <input type="number" id="height" placeholder="Contoh: 170" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="activity">Level Aktivitas</label>
+                <select id="activity" required>
+                    <option value="1.2">Jarang (Sedentary, jarang olahraga)</option>
+                    <option value="1.375">Ringan (Olahraga 1-3x / minggu)</option>
+                    <option value="1.55">Sedang (Olahraga 3-5x / minggu)</option>
+                    <option value="1.725">Aktif (Olahraga 6-7x / minggu)</option>
+                    <option value="1.9">Sangat Aktif (Pekerja fisik / atlet)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="goal">Tujuan Anda</label>
+                <select id="goal" required>
+                    <option value="lose">Turunkan Berat Badan (Defisit)</option>
+                    <option value="maintain">Jaga Berat Badan (Maintenance)</option>
+                    <option value="gain">Naikkan Berat Badan (Surplus)</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn-submit">Hitung Kebutuhan Saya</button>
+        </form>
+
+        <section id="results">
+            <h2>Hasil Perhitungan Anda</h2>
+            <div class="result-cards">
+                <div class="card">
+                    <div class="card-header">
+                        <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-3.867 8.21 8.21 0 0 0 3 .478Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 3.75 3.75 0 0 0-7.463-1.11 3.75 3.75 0 0 0 6.968-3.044 3.75 3.75 0 0 0-3.044 6.968 3.75 3.75 0 0 0-1.11 7.463A3.75 3.75 0 0 0 12 18Z" />
+                        </svg>
+                        <h3 class="card-title">Kebutuhan Kalori</h3>
+                    </div>
+                    <p class="card-value" id="calorie-result">0 <span>kkal</span></p>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                           <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5a4.5 4.5 0 0 0-8.69-2.25A4.5 4.5 0 0 0 3.75 7.5c0 1.97 1.4 3.63 3.28 4.13C8.908 12.63 10.37 13.5 12 13.5s3.092-.87 4.97-1.87c1.88-.5 3.28-2.16 3.28-4.13Z" />
+                           <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 16.5a4.5 4.5 0 0 1 8.69 2.25A4.5 4.5 0 0 1 20.25 16.5c0-1.97-1.4-3.63-3.28-4.13C15.092 11.37 13.63 10.5 12 10.5s-3.092.87-4.97 1.87C5.15 12.87 3.75 14.53 3.75 16.5Z" />
+                        </svg>
+                        <h3 class="card-title">Kebutuhan Protein</h3>
+                    </div>
+                    <p class="card-value" id="protein-result">0 <span>gram</span></p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.getElementById('calorie-form').addEventListener('submit', function(e) {
+            e.preventDefault(); 
+
+            // 1. Ambil semua nilai dari input
+            const age = parseInt(document.getElementById('age').value);
+            const gender = document.getElementById('gender').value;
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const activity = parseFloat(document.getElementById('activity').value);
+            const goal = document.getElementById('goal').value;
+
+            // 2. Validasi input (sederhana)
+            if (isNaN(age) || isNaN(weight) || isNaN(height) || age <= 0 || weight <= 0 || height <= 0) {
+                alert('Pastikan semua data (usia, berat, tinggi) diisi dengan benar.');
+                return;
+            }
+
+            // 3. Hitung BMR (Basal Metabolic Rate) menggunakan Mifflin-St Jeor
+            let bmr;
+            if (gender === 'male') {
+                bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
+            } else { // female
+                bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
+            }
+
+            // 4. Hitung TDEE (Total Daily Energy Expenditure)
+            const tdee = bmr * activity;
+
+            // 5. Sesuaikan kalori berdasarkan Tujuan
+            let finalCalories;
+            if (goal === 'lose') {
+                finalCalories = tdee - 500; // Defisit 500 kalori
+            } else if (goal === 'gain') {
+                finalCalories = tdee + 500; // Surplus 500 kalori
+            } else { // maintain
+                finalCalories = tdee;
+            }
+
+            // 6. Hitung Protein
+            let proteinGrams;
+            if (goal === 'lose') {
+                proteinGrams = weight * 2.0;
+            } else if (goal === 'gain') {
+                proteinGrams = weight * 1.8;
+            } else { // maintain
+                proteinGrams = weight * 1.6;
+            }
+
+            // 7. Tampilkan hasil
+            const resultsSection = document.getElementById('results');
+            const calorieEl = document.getElementById('calorie-result');
+            const proteinEl = document.getElementById('protein-result');
+
+            // Format angka dengan pemisah ribuan
+            const formatter = new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 });
+
+            calorieEl.innerHTML = `${formatter.format(finalCalories)} <span>kkal</span>`;
+            proteinEl.innerHTML = `${formatter.format(proteinGrams)} <span>gram</span>`;
+
+            resultsSection.style.display = 'block';
+            
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        });
+    </script>
+</body>
+</html>
